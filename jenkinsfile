@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Test') {
+            when {
+                // Trigger only when changes are pushed to the "develop" branch
+                changeset "origin/develop"
+            }
+            steps {
+                // Checkout the code from Git
+                checkout scm
+                // Run your test job here
+                echo"test passed"
+            }
+        }
+        stage('Deploy to Prod') {
+            when {
+                // Trigger when the "test" stage is successful
+                expression {
+                    currentBuild.resultIsBetterOrEqualTo('SUCCESS')
+                }
+            }
+            steps {
+                // Deploy to production
+                echo"production"
+            }
+        }
+    }
+}
